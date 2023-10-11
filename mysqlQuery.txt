@@ -1,0 +1,25 @@
+-- Create a new table with utf8mb3_general_ci collation
+CREATE TABLE new_table (
+    name VARCHAR(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci,
+    product_id INT,
+    category_id INT
+);
+
+-- Insert the result of the query into the new table
+INSERT INTO new_table (name, product_id, category_id)
+SELECT
+    lcd.name,
+    lpc.product_id,
+    lpc.category_id
+FROM
+    lem_category_description AS lcd
+JOIN
+    lem_product_to_category AS lpc
+ON
+    lcd.category_id = lpc.category_id;
+
+
+-- Delete category like sale, promiotion etc
+DELETE FROM new_table WHERE category_id IN (322, 575, 591, 622, 371, 425, 589, 588, 433, 621, 430, 593, 594, 142, 230);
+
+
