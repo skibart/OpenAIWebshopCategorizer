@@ -76,8 +76,7 @@ async function readIdNameCheckCategoryAndSet(path) {
   const data = await readFileAsync(path);
   const products = await createLineChunks(data);
 
-  for (const product of products) {
-    const productID = product;
+  for (const productID of products) {
     const productName = await productDbControler(product);
     const categoryProduct = await queryDbAndOpenAi(productName);
     if (/^\d{1,3}$/.test(categoryProduct)) {
@@ -93,4 +92,4 @@ async function readIdNameCheckCategoryAndSet(path) {
     console.log(productID, productName, categoryProduct);
   }
 }
-// readIdNameCheckCategoryAndSet("./product_list.txt");
+readIdNameCheckCategoryAndSet("./product_list.txt");

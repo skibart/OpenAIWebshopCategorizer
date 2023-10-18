@@ -8,7 +8,7 @@ CREATE TABLE new_table (
 -- Insert the result of the query into the new table
 INSERT INTO new_table (name, product_id, category_id)
 SELECT
-    lcd.name,
+    lem_category_description.name,
     lpc.product_id,
     lpc.category_id
 FROM
