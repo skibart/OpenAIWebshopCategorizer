@@ -14,6 +14,7 @@ import {
   productDbControler,
   productToCategoryControler,
 } from "./utils/dbController.js";
+import { json } from "stream/consumers";
 
 const openai = new OpenAI();
 
@@ -68,8 +69,9 @@ async function queryDbAndOpenAi(productName) {
     responseData,
     configData.limitTokenForContex
   );
-  const completion = await queryOpenAi(productName, trimAndTokenized);
-  return completion;
+  const rawCompletion = await queryOpenAi(productName, trimAndTokenized);
+  const jsonCompletion = JSON.parse(rawCompletion);
+  return jsonCompletion[0];
 }
 
 async function readIdNameCheckCategoryAndSet(path) {
@@ -78,18 +80,27 @@ async function readIdNameCheckCategoryAndSet(path) {
 
   for (const productID of products) {
     const productName = await productDbControler(productID);
-    const categoryProduct = await queryDbAndOpenAi(productName);
-    if (/^\d{1,3}$/.test(categoryProduct)) {
-      const response = await productToCategoryControler(
-        productID,
-        categoryProduct
-      );
-      console.log(response);
+    const completionResponse = await queryDbAndOpenAi(productName);
+    if (completionResponse) {
+      if (completionResponse.FoundCategory) {
+        for (let i = 0; i < configData.howManyCategories; i++) {
+          if (/^\d{1,3}$/.test(+completionResponse.categories[i])) {
+            const response = await productToCategoryControler(
+              productID,
+              +completionResponse.categories[i]
+            );
+            console.log(response);
+          } else {
+            console.log("Sorry, something wrong with category ID");
+          }
+        }
+        console.log(productID, completionResponse);
+      } else {
+        console.log("Sorry, Ai cant find a matching category");
+      }
     } else {
-      console.log("something is wrong");
+      console.log("Sorry, problem with response");
     }
-
-    console.log(productID, productName, categoryProduct);
   }
 }
 readIdNameCheckCategoryAndSet("./product_list.txt");
