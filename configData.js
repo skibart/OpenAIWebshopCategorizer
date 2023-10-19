@@ -3,6 +3,7 @@ const configData = {
   question: "",
   limitTokenForContex: 1500,
   vector_match_count: 20,
+  howManyCategories: 2,
   documentPath: "base.txt",
   aiModel: "gpt-3.5-turbo",
   aiInstruction: `wiedząc że pierwsza wartość to ID po średniku nazwa kategorii po następnym średniku to nazwa produktu, podaj wyłącznie samo ID kategorii dla: `,

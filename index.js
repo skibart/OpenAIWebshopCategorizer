@@ -77,7 +77,7 @@ async function readIdNameCheckCategoryAndSet(path) {
   const products = await createLineChunks(data);
 
   for (const productID of products) {
-    const productName = await productDbControler(product);
+    const productName = await productDbControler(productID);
     const categoryProduct = await queryDbAndOpenAi(productName);
     if (/^\d{1,3}$/.test(categoryProduct)) {
       const response = await productToCategoryControler(
